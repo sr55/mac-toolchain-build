@@ -17,9 +17,10 @@ jobs:
       - name: Build Toolchain
         run: |
            chmod 755 mac-toolchain-build
+           BUILD_VERSION="$(./mac-toolchain-build --version | cut -d ' ' -f 2)"
            ./mac-toolchain-build ~/toolchains/
            cd ~/
-           tar cvzf macOS-toolchain.tar.gz toolchains/
+           tar cvzf mac-toolchain-$BUILD_VERSION.tar.gz toolchains/
       - name: Upload Release Asset
         if: github.event_name == 'release'
         id: upload-release-asset 
@@ -28,7 +29,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: /Users/runner/macOS-toolchain.tar.gz
+          asset_path: /Users/runner/mac-toolchain-$BUILD_VERSION.tar.gz
           asset_name: macOS-toolchain.tar.gz 
           asset_content_type: application/gzip
     
